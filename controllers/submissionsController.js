@@ -1,5 +1,4 @@
 import Submission from '../models/Submission.js';
-import Setting from '../models/Setting.js';
 
 export const getMySubmissions = async (req, res) => {
   try {
@@ -18,7 +17,13 @@ export const getAllSubmissions = async (req, res) => {
          select: 'name role department_id',
          populate: { path: 'department_id', select: 'name' }
       })
-      .populate('activity_id');
+      .populate({
+         path: 'activity_id',
+         populate: [
+            { path: 'section_id', select: 'title' },
+            { path: 'sub_section_id', select: 'title' }
+         ]
+      });
     res.json(submissions);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -27,16 +32,20 @@ export const getAllSubmissions = async (req, res) => {
 
 export const createSubmission = async (req, res) => {
   try {
-    const setting = await Setting.findOne();
-    if (setting && setting.submission_deadline < new Date()) {
-      return res.status(403).json({ message: 'Submission deadline has passed' });
-    }
-
     const { activity_id, description } = req.body;
 
-    const existing = await Submission.findOne({ user_id: req.user._id, activity_id });
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    const existing = await Submission.findOne({ 
+       user_id: req.user._id, 
+       activity_id,
+       createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+    });
+
     if (existing) {
-       return res.status(400).json({ message: 'You have already submitted proof for this activity. Navigate to "My Submissions" to edit it.' });
+       return res.status(400).json({ message: 'You have already submitted proof for this activity this month. Navigate to "My Submissions" to edit it.' });
     }
 
     let proof_url = req.body.proof_url || '';
@@ -59,11 +68,6 @@ export const createSubmission = async (req, res) => {
 
 export const updateSubmission = async (req, res) => {
   try {
-    const setting = await Setting.findOne();
-    if (setting && setting.submission_deadline < new Date()) {
-      return res.status(403).json({ message: 'Submission deadline has passed. Cannot edit.' });
-    }
-
     const submission = await Submission.findById(req.params.id);
     if (!submission) {
       return res.status(404).json({ message: 'Submission not found' });

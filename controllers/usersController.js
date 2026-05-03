@@ -10,6 +10,15 @@ export const getUsers = async (req, res) => {
   }
 };
 
+export const getDepartmentStaff = async (req, res) => {
+  try {
+    const staff = await User.find({ department_id: req.user.department_id, role: 'staff' }).select('-password');
+    res.json(staff);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const createUser = async (req, res) => {
   try {
     const { name, email, password, role, department_id } = req.body;
@@ -56,6 +65,21 @@ export const deleteUser = async (req, res) => {
     }
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User removed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateMonthlyTarget = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.monthly_target) return res.status(400).json({ message: 'Target already locked.' });
+    
+    user.monthly_target = req.body.target;
+    await user.save();
+    
+    res.json({ message: 'Target locked', user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

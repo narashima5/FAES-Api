@@ -22,3 +22,17 @@ export const createDepartment = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const updateNoticeboard = async (req, res) => {
+  try {
+    const department = await Department.findById(req.user.department_id);
+    if (!department) return res.status(404).json({ message: 'Department not found' });
+    
+    department.noticeboard = req.body.noticeboard || '';
+    await department.save();
+    
+    res.json(department);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

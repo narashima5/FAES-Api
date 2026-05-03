@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
     enum: ['staff', 'hod', 'iqac', 'management', 'admin'], 
     required: true 
   },
-  department_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' }
+  department_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Department', required: function() { return this.role === 'staff' || this.role === 'hod'; } },
+  monthly_target: { type: Number, default: null }
 }, { timestamps: true });
 
 export default mongoose.model('User', userSchema);

@@ -6,8 +6,7 @@ const activitySchema = new mongoose.Schema({
   title: { type: String, required: true },
   max_marks: { type: Number, required: true },
   criteria: { type: String },
-  proof_type: { type: String, enum: ['file', 'link', 'both'], required: true },
-  deadline: { type: Date }
+  proof_type: { type: String, enum: ['file', 'link', 'both'], required: true }
 }, { timestamps: true });
 
 export default mongoose.model('Activity', activitySchema);

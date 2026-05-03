@@ -58,9 +58,9 @@ export const getActivities = async (req, res) => {
 
 export const createActivity = async (req, res) => {
   try {
-    const { section_id, sub_section_id, title, max_marks, criteria, proof_type, deadline } = req.body;
+    const { section_id, sub_section_id, title, max_marks, criteria, proof_type } = req.body;
     const activity = await Activity.create({
-      section_id, sub_section_id, title, max_marks, criteria, proof_type, deadline
+      section_id, sub_section_id, title, max_marks, criteria, proof_type
     });
     res.status(201).json(activity);
   } catch (error) {

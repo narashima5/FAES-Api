@@ -24,6 +24,7 @@ import activityRoutes from './routes/activityRoutes.js';
 import submissionRoutes from './routes/submissionRoutes.js';
 import evaluationRoutes from './routes/evaluationRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import settingRoutes from './routes/settingRoutes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -32,6 +33,7 @@ app.use('/api/activities', activityRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/evaluations', evaluationRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/settings', settingRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
