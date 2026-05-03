@@ -64,6 +64,11 @@ export const getMonthlyFacultyReport = async (req, res) => {
     const users = await User.find(userQuery).select('-password').populate('department_id', 'name');
     const userIds = users.map(u => u._id);
 
+    const submissions = await Submission.find({
+      user_id: { $in: userIds },
+      createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+    }).populate('activity_id');
+
     const sections = await Section.find();
     
     const report = generateMonthlyFacultyReport(users, submissions, sections, currentMonth, currentYear);
