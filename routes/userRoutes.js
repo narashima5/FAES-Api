@@ -9,6 +9,6 @@ router.get('/', protect, authorizeRoles('admin'), getUsers);
 router.get('/department-staff', protect, authorizeRoles('hod'), getDepartmentStaff);
 router.post('/', protect, authorizeRoles('admin'), createUser);
 router.delete('/:id', protect, authorizeRoles('admin'), deleteUser);
-router.put('/target', protect, authorizeRoles('staff'), updateMonthlyTarget);
+router.put('/target', protect, authorizeRoles('staff', 'hod'), updateMonthlyTarget);
 
 export default router;
